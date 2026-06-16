@@ -130,8 +130,8 @@ function SignInContent() {
       } else {
         setSent(true);
       }
-    } catch {
-      setError("An unexpected authentication error occurred.");
+    } catch (e: any) {
+      setError(e?.message || "An unexpected authentication error occurred.");
     } finally {
       setLoading(false);
     }
