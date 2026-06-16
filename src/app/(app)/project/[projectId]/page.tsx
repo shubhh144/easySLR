@@ -92,20 +92,22 @@ export default async function ProjectPage({
         }}>
           Articles
         </Link>
-        <Link href={`/project/${projectId}?tab=settings`} style={{
-          paddingBottom: 12,
-          fontSize: 14,
-          fontWeight: 600,
-          textDecoration: "none",
-          color: isSettingsTab ? "var(--text-primary)" : "var(--text-muted)",
-          borderBottom: isSettingsTab ? "2px solid var(--border-active)" : "2px solid transparent",
-          marginBottom: -1
-        }}>
-          Settings
-        </Link>
+        {isProjectManager && (
+          <Link href={`/project/${projectId}?tab=settings`} style={{
+            paddingBottom: 12,
+            fontSize: 14,
+            fontWeight: 600,
+            textDecoration: "none",
+            color: isSettingsTab ? "var(--text-primary)" : "var(--text-muted)",
+            borderBottom: isSettingsTab ? "2px solid var(--border-active)" : "2px solid transparent",
+            marginBottom: -1
+          }}>
+            Settings
+          </Link>
+        )}
       </div>
 
-      {isSettingsTab ? (
+      {isSettingsTab && isProjectManager ? (
         <ProjectSettings projectId={projectId} currentUserId={currentUserId} />
       ) : (
         <>
