@@ -11,6 +11,7 @@ export default $config({
     new sst.aws.Nextjs("MyWeb", {
       environment: {
         DATABASE_URL: process.env.DATABASE_URL!,
+        DIRECT_URL: process.env.DIRECT_URL || "",
         AUTH_SECRET: process.env.AUTH_SECRET!,
         EMAIL_SERVER: process.env.EMAIL_SERVER!,
         EMAIL_FROM: process.env.EMAIL_FROM!,
