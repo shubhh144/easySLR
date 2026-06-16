@@ -16,7 +16,7 @@ function generateSlug(name: string): string {
 
 // Nodemailer transport setup
 function getTransporter() {
-  const connectionString = process.env.EMAIL_SERVER ?? "smtp://localhost:1025";
+  const connectionString = process.env.EMAIL_SERVER || "smtp://localhost:1025";
   return nodemailer.createTransport(connectionString);
 }
 

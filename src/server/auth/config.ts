@@ -17,8 +17,8 @@ export const authConfig = {
   providers: [
     // ── Email magic link ──────────────────────────────────────────────────────
     EmailProvider({
-      server: process.env.EMAIL_SERVER ?? "smtp://localhost:1025",
-      from: process.env.EMAIL_FROM ?? "EasySLR <noreply@easyslr.dev>",
+      server: process.env.EMAIL_SERVER || "smtp://localhost:1025",
+      from: process.env.EMAIL_FROM || "EasySLR <noreply@easyslr.dev>",
     }),
 
     // ── Google OAuth ──────────────────────────────────────────────────────────
