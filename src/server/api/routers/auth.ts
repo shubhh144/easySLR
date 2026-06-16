@@ -68,7 +68,10 @@ export const authRouter = createTRPCRouter({
       });
 
       // 5. Send email
-      const verifyUrl = `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}/auth/verify-registration?token=${token}`;
+      const host = ctx.headers.get("x-forwarded-host") || ctx.headers.get("host") || "localhost:3000";
+      const protocol = host.includes("localhost") ? "http" : "https";
+      const baseUrl = `${protocol}://${host}`;
+      const verifyUrl = `${baseUrl}/auth/verify-registration?token=${token}`;
       const mailOptions = {
         from: process.env.EMAIL_FROM ?? "EasySLR <noreply@easyslr.dev>",
         to: input.email,
