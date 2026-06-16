@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { api } from "~/trpc/react";
 
 // ── Icons (Pure SVG) ───────────────────────────────────────────────────────
 function LogoMark() {
@@ -101,6 +102,8 @@ function SignInContent() {
     }
   }, [verified, verifiedEmail]);
 
+  const checkEmail = api.auth.checkEmailRegistered.useMutation();
+
   // Email magic link / Dev Login
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,18 +111,22 @@ function SignInContent() {
     setLoading(true);
     setError("");
     try {
+      // 1. Run tRPC query first to see if user exists and has org memberships
+      const checkRes = await checkEmail.mutateAsync({ email: email.trim() });
+      if (!checkRes.registered) {
+        setError("This email is not registered. Please register your laboratory first.");
+        setLoading(false);
+        return;
+      }
+
+      // 2. Proceed to NextAuth sign in only if registered
       const res = await signIn("email", {
         email,
         redirect: false,
         callbackUrl: "/dashboard",
       });
       if (res?.error) {
-        const errStr = String(res.error).toLowerCase();
-        if (errStr.includes("accessdenied")) {
-          setError("This email is not registered. Please register your laboratory first.");
-        } else {
-          setError("Could not send magic link. Verify SMTP connection settings.");
-        }
+        setError("Could not send magic link. Verify SMTP connection settings.");
       } else {
         setSent(true);
       }

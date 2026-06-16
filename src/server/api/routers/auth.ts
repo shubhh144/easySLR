@@ -182,4 +182,19 @@ export const authRouter = createTRPCRouter({
 
       return { success: true, email: pending.email };
     }),
+
+  checkEmailRegistered: publicProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { email: input.email },
+        include: {
+          orgMemberships: true,
+        },
+      });
+      return {
+        registered: !!(user && user.orgMemberships.length > 0),
+      };
+    }),
 });
+
