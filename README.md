@@ -159,7 +159,11 @@ A quick guide to navigating the core folders and files in the codebase:
   * [import.ts](./src/server/api/routers/import.ts) - Handles Excel parsing, triage validation, and import execution.
   * [organization.ts](./src/server/api/routers/organization.ts) - Organization membership management, inviting users, and updating slug URLs.
 * `src/server/import/` - The core stateless Excel processing logic:
-  * [triage.ts](./src/server/import/triage.ts) - The 5-tier classification engine mapping PMID and DOI duplicate boundaries.
+  * [engine.ts](./src/server/import/engine.ts) - Core pipeline orchestrator.
+  * [normalize.ts](./src/server/import/normalize.ts) - Cleans and normalizes raw fields.
+  * [validate.ts](./src/server/import/validate.ts) - Runs validation rules and returns warning badges.
+  * [duplicate.ts](./src/server/import/duplicate.ts) - Performs exact identifier checks based on the trust hierarchy.
+  * [fuzzy.ts](./src/server/import/fuzzy.ts) - Computes title similarity and author overlap.
 * `src/app/` - The Next.js frontend pages and components:
   * `(app)/project/[projectId]/_components/` - Interactive dashboard widgets (e.g. `ArticleTable`, `ImportWizard`, `BulkActionBar`).
   * `auth/` - Custom login and signup views (strictly passwordless / OAuth only).
@@ -185,10 +189,12 @@ A quick guide to navigating the core folders and files in the codebase:
 
 ---
 
-## 10. Deployment Status
+## 10. Deployment & CI/CD
 
-* **Build Configuration**: The project is configured and validated for standard production Next.js builds.
-* **Database Migrations**: Production deployments run database schema changes using `npx prisma migrate deploy` to safely apply migrations.
+The application is configured to deploy to AWS using **SST v3** (Serverless Stack) and **OpenNext**:
+* **Infrastructure**: Defined in [sst.config.ts](./sst.config.ts), compiling Next.js into serverless CloudFront, S3 (for static content caching), and Lambda (for API routes and server rendering).
+* **CI/CD Pipeline**: Configured in [.github/workflows/deploy.yml](./.github/workflows/deploy.yml). It automatically triggers on pushes to the `main` branch, setting up **Node.js 24** (complying with modern Actions runner requirements and package engine criteria), installing dependencies, building Next.js, and running the SST deployment.
+* **Database Sync**: Production database runs on Supabase cloud. Schema changes are safely executed via `npx prisma migrate deploy` during deployment to prevent data loss.
 
 ---
 
