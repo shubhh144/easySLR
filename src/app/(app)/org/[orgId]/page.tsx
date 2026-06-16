@@ -61,12 +61,16 @@ export default async function OrgPage({
   const isOwner = myMemberRecord?.role === "OWNER";
   const isSettingsTab = tab === "settings" && isOwner;
 
+  // Check project creation access
+  const { allowed: canCreate } = await caller.project.canCreateProject({ organizationId: orgId });
+
   return (
     <div>
       <OrgHeader
         orgId={orgId}
         initialName={org.name}
         isOwner={isOwner}
+        canCreate={canCreate}
         projectsCount={projects.length}
         membersCount={org.members.length}
         isSettingsTab={isSettingsTab}
@@ -109,11 +113,11 @@ export default async function OrgPage({
           </div>
           <h3>No Projects</h3>
           <p style={{ color: "var(--text-muted)" }}>
-            {isOwner
+            {canCreate
               ? "Create a new project within this organization to begin importing research citations."
               : "Ask the organization owner to create a project and assign you to it."}
           </p>
-          {isOwner && <CreateProjectModal orgId={orgId} buttonLabel="Create First Project" />}
+          {canCreate && <CreateProjectModal orgId={orgId} buttonLabel="Create First Project" />}
         </div>
       ) : (
         <div className="grid-cards">

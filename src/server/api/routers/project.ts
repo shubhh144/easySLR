@@ -16,6 +16,7 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   assertOrgAccess,
   assertOrgOwner,
+  assertCanCreateProject,
   assertProjectAccess,
   assertProjectManager,
 } from "~/server/api/auth-helpers";
@@ -39,7 +40,7 @@ export const projectRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await assertOrgOwner(ctx.db, ctx.session.user.id, input.organizationId);
+      await assertCanCreateProject(ctx.db, ctx.session.user.id, input.organizationId);
 
       const project = await ctx.db.$transaction(async (tx) => {
         const project = await tx.project.create({
@@ -64,6 +65,20 @@ export const projectRouter = createTRPCRouter({
       });
 
       return project;
+    }),
+
+  /**
+   * Check if the current user is allowed to create projects in the organization.
+   */
+  canCreateProject: protectedProcedure
+    .input(z.object({ organizationId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      try {
+        await assertCanCreateProject(ctx.db, ctx.session.user.id, input.organizationId);
+        return { allowed: true };
+      } catch {
+        return { allowed: false };
+      }
     }),
 
   /**

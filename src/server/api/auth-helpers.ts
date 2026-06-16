@@ -82,6 +82,56 @@ export async function assertOrgOwner(
   return membership;
 }
 
+/**
+ * Assert that the user is allowed to create a project in the organization.
+ * Allowed if they are:
+ * 1. An Org Owner
+ * 2. OR a Project Manager in at least one project under this org
+ * 3. OR not a member of any project under this org yet (new org member)
+ */
+export async function assertCanCreateProject(
+  db: Db,
+  userId: string,
+  organizationId: string,
+) {
+  // Check org membership
+  const orgMembership = await db.organizationMember.findUnique({
+    where: {
+      organizationId_userId: { organizationId, userId },
+    },
+  });
+
+  if (!orgMembership) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You do not have access to this organization.",
+    });
+  }
+
+  if (orgMembership.role === "OWNER") {
+    return;
+  }
+
+  // Check project memberships
+  const memberships = await db.projectMember.findMany({
+    where: {
+      userId,
+      project: { organizationId },
+    },
+    select: {
+      role: true,
+    },
+  });
+
+  // If they are in projects but not a MANAGER in any of them, block them
+  if (memberships.length > 0 && !memberships.some((m) => m.role === "MANAGER")) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Reviewers are not allowed to create projects.",
+    });
+  }
+}
+
 // ─── PROJECT ACCESS ───────────────────────────────────────────────────────────
 
 /**

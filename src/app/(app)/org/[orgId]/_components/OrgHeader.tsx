@@ -59,6 +59,7 @@ export function OrgHeader({
   orgId,
   initialName,
   isOwner,
+  canCreate = false,
   projectsCount,
   membersCount,
   isSettingsTab,
@@ -66,6 +67,7 @@ export function OrgHeader({
   orgId: string;
   initialName: string;
   isOwner: boolean;
+  canCreate?: boolean;
   projectsCount: number;
   membersCount: number;
   isSettingsTab: boolean;
@@ -234,7 +236,7 @@ export function OrgHeader({
         )}
       </div>
 
-      {!isSettingsTab && isOwner && <CreateProjectModal orgId={orgId} />}
+      {!isSettingsTab && canCreate && <CreateProjectModal orgId={orgId} />}
     </div>
   );
 }
