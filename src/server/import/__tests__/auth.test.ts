@@ -73,6 +73,9 @@ describe("Auth Router - Invitation-First Owner Registration", () => {
     ctx = {
       db: dbMock,
       session: null,
+      headers: new Headers({
+        host: "localhost:3000",
+      }),
     };
   });
 

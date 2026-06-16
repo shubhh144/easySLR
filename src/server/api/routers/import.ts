@@ -407,6 +407,8 @@ export const importRouter = createTRPCRouter({
         }
 
         return batch;
+      }, {
+        timeout: 90000, // 90 seconds timeout to prevent transaction expiry during batch insert on remote DB
       });
 
       return {
@@ -578,6 +580,8 @@ export const importRouter = createTRPCRouter({
         await tx.importBatch.delete({
           where: { id: input.batchId },
         });
+      }, {
+        timeout: 60000, // 60 seconds timeout to prevent transaction expiry during cascade delete on remote DB
       });
 
       return { success: true };

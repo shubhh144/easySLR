@@ -257,6 +257,8 @@ export const projectRouter = createTRPCRouter({
         await tx.article.deleteMany({
           where: { projectId: input.projectId },
         });
+      }, {
+        timeout: 60000, // 60 seconds timeout to prevent transaction expiry during cascade delete on remote DB
       });
 
       return { success: true };
