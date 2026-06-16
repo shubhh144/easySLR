@@ -114,7 +114,12 @@ function SignInContent() {
         callbackUrl: "/dashboard",
       });
       if (res?.error) {
-        setError("Could not send magic link. Verify SMTP connection settings.");
+        const errStr = String(res.error).toLowerCase();
+        if (errStr.includes("accessdenied")) {
+          setError("This email is not registered. Please register your laboratory first.");
+        } else {
+          setError("Could not send magic link. Verify SMTP connection settings.");
+        }
       } else {
         setSent(true);
       }
