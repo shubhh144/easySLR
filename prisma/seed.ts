@@ -16,14 +16,16 @@ async function main() {
   // ── Production Safeguard ────────────────────────────────────────────────
   const databaseUrl = process.env.DATABASE_URL ?? "";
   const isProduction =
-    process.env.NODE_ENV === "production" ||
-    databaseUrl.includes("aws") ||
-    databaseUrl.includes("rds") ||
-    databaseUrl.includes("supabase") ||
-    databaseUrl.includes("prod");
+    (process.env.NODE_ENV === "production" ||
+      databaseUrl.includes("aws") ||
+      databaseUrl.includes("rds") ||
+      databaseUrl.includes("supabase") ||
+      databaseUrl.includes("prod")) &&
+    !process.argv.includes("--force");
 
   if (isProduction) {
     console.error("❌ CRITICAL ERROR: Seeding and database resets are blocked in production environments!");
+    console.error("💡 If you are seeding a development/testing Supabase database, run: npm run db:seed -- --force");
     process.exit(1);
   }
 
