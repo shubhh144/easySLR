@@ -128,12 +128,12 @@ EasySLR includes a comprehensive test suite (110 test cases) powered by **Vitest
 The system uses a decoupled layout, separating stateless processing from state updates:
 
 ```mermaid
-graph TD
-    Client[Next.js Client UI] -->|tRPC Queries/Mutations| Server[tRPC Server Router]
-    Client -->|NextAuth Sign-in| NextAuth[NextAuth.js]
-    Server -->|Authorization Helper Checks| AuthGates[Auth Gates]
-    Server -->|Prisma Client| DB[(PostgreSQL Database)]
-    Server -->|SheetJS Buffer Parser| Engine[Import Triage Engine]
+graph LR
+    Client[Next.js Client UI] -->|tRPC| Server[tRPC Server Router]
+    Client -->|NextAuth| NextAuth[NextAuth.js]
+    Server -->|Auth Gates| AuthGates[Auth Gates]
+    Server -->|Prisma| DB[(PostgreSQL Database)]
+    Server -->|SheetJS| Engine[Import Triage Engine]
 ```
 
 ### 7.1 Database Entity-Relationship (ER) Model
@@ -141,15 +141,15 @@ The application data models are defined using strict relational integrity as sho
 
 ```mermaid
 erDiagram
-    Organization ||--o{ Project : contains
-    Organization ||--o{ OrganizationMember : has
-    Project ||--o{ ProjectMember : has
-    Project ||--o{ Article : contains
-    Project ||--o{ ImportBatch : executes
-    User ||--o{ OrganizationMember : is
-    User ||--o{ ProjectMember : is
-    ImportBatch ||--o{ ImportRowResult : records
-    Article ||--o{ ImportRowResult : matches
+    Organization ||--o{ Project : "contains"
+    Organization ||--o{ OrganizationMember : "has"
+    Project ||--o{ ProjectMember : "has"
+    Project ||--o{ Article : "contains"
+    Project ||--o{ ImportBatch : "executes"
+    User ||--o{ OrganizationMember : "is"
+    User ||--o{ ProjectMember : "is"
+    ImportBatch ||--o{ ImportRowResult : "records"
+    Article ||--o{ ImportRowResult : "matches"
 ```
 
 ### 7.2 Codebase Tour
