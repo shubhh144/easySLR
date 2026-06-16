@@ -108,8 +108,12 @@ export default async function OrgPage({
             <FolderIcon />
           </div>
           <h3>No Projects</h3>
-          <p style={{ color: "var(--text-muted)" }}>Create a new project within this organization to begin importing research citations.</p>
-          <CreateProjectModal orgId={orgId} buttonLabel="Create First Project" />
+          <p style={{ color: "var(--text-muted)" }}>
+            {isOwner
+              ? "Create a new project within this organization to begin importing research citations."
+              : "Ask the organization owner to create a project and assign you to it."}
+          </p>
+          {isOwner && <CreateProjectModal orgId={orgId} buttonLabel="Create First Project" />}
         </div>
       ) : (
         <div className="grid-cards">

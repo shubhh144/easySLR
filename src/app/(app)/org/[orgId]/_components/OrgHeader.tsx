@@ -234,7 +234,7 @@ export function OrgHeader({
         )}
       </div>
 
-      {!isSettingsTab && <CreateProjectModal orgId={orgId} />}
+      {!isSettingsTab && isOwner && <CreateProjectModal orgId={orgId} />}
     </div>
   );
 }

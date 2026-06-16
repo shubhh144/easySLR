@@ -39,7 +39,7 @@ export const projectRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await assertOrgAccess(ctx.db, ctx.session.user.id, input.organizationId);
+      await assertOrgOwner(ctx.db, ctx.session.user.id, input.organizationId);
 
       const project = await ctx.db.$transaction(async (tx) => {
         const project = await tx.project.create({
