@@ -17,10 +17,13 @@ EasySLR is an intelligent web application built for researchers to import citati
    ```
 2. Configure environment variables in `.env` (using `.env.example` as a template):
    ```env
-   DATABASE_URL="postgresql://username:password@localhost:5432/easyslr"
+   # Transaction-mode pooled connection URL (disable prepared statements for PgBouncer)
+   DATABASE_URL="postgresql://username:password@localhost:5432/easyslr?pgbouncer=true"
+   # Direct database connection URL (used for DDL migrations)
+   DIRECT_URL="postgresql://username:password@localhost:5432/easyslr"
    AUTH_SECRET="your-auth-jwt-secret-key"
    ```
-3. Deploy the database schema:
+3. Deploy the database schema (utilizes DIRECT_URL under the hood):
    ```bash
    npx prisma migrate deploy
    ```
@@ -79,6 +82,7 @@ Authorization is enforced server-side inside tRPC procedure calls by checking th
 | Action / Capability | Org Owner | Project Manager | Project Reviewer |
 | :--- | :---: | :---: | :---: |
 | **View Organization Projects** | Yes (all projects) | Yes (assigned projects) | Yes (assigned projects) |
+| **Create Project in Workspace** | Yes | Yes | No (blocked server-side) |
 | **Import Dataset Files** | Yes | Yes | No (blocked server-side) |
 | **Clear Project Screening Data** | Yes | Yes | No (blocked server-side) |
 | **Manage Project Team Members** | Yes | Yes | No (blocked server-side) |
