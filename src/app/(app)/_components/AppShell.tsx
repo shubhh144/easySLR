@@ -40,7 +40,7 @@ function Avatar({ user }: { user: User }) {
 }
 
 // ── Sidebar ────────────────────────────────────────────────────────────────
-function Sidebar({ user }: { user: User }) {
+function Sidebar({ user, isOpen, onClose }: { user: User; isOpen: boolean; onClose: () => void }) {
   const pathname = usePathname();
   const { data: orgs } = api.organization.listMine.useQuery();
   const [lightMode, setLightMode] = useState(false);
@@ -67,7 +67,7 @@ function Sidebar({ user }: { user: User }) {
 
   return (
     <>
-      <nav className="sidebar">
+      <nav className={`sidebar ${isOpen ? "open" : ""}`}>
         {/* Logo */}
         <div className="sidebar-logo">
           <div className="sidebar-logo-mark">SLR</div>
@@ -75,7 +75,7 @@ function Sidebar({ user }: { user: User }) {
         </div>
 
         {/* Main nav */}
-        <Link href="/dashboard" className={`nav-link ${isActive("/dashboard") ? "active" : ""}`}>
+        <Link href="/dashboard" className={`nav-link ${isActive("/dashboard") ? "active" : ""}`} onClick={onClose}>
           <HomeIcon /> Dashboard
         </Link>
 
@@ -88,6 +88,7 @@ function Sidebar({ user }: { user: User }) {
                 key={org.id}
                 href={`/org/${org.id}`}
                 className={`nav-link ${isActive(`/org/${org.id}`) ? "active" : ""}`}
+                onClick={onClose}
               >
                 <BuildingIcon />
                 <span className="truncate" style={{ maxWidth: 150 }}>{org.name}</span>
@@ -156,9 +157,47 @@ function Sidebar({ user }: { user: User }) {
 
 // ── App Shell ──────────────────────────────────────────────────────────────
 export function AppShell({ children, user }: { children: React.ReactNode; user: User }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
   return (
     <div className="app-shell">
-      <Sidebar user={user} />
+      {/* Mobile Header */}
+      <header className="mobile-header">
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button
+            onClick={toggleMobileMenu}
+            style={{
+              background: "none",
+              border: "none",
+              color: "var(--text-primary)",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 4,
+            }}
+            title="Toggle Menu"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </button>
+          <span className="sidebar-logo-text">EasySLR</span>
+        </div>
+      </header>
+
+      {/* Backdrop for mobile drawer */}
+      <div
+        className={`sidebar-backdrop ${isMobileMenuOpen ? "open" : ""}`}
+        onClick={closeMobileMenu}
+      />
+
+      <Sidebar user={user} isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
       <main className="main-content">{children}</main>
     </div>
   );

@@ -357,7 +357,7 @@ export function ArticleTable({
       {/* Bulk Actions Panel (Displays only if row selection exists) */}
       {selectedIds.size > 0 && (
         <div
-          className="alert alert-info"
+          className="alert alert-info bulk-actions-panel"
           style={{
             display: "flex",
             alignItems: "center",
