@@ -9,6 +9,7 @@ export default $config({
   },
   async run() {
     new sst.aws.Nextjs("MyWeb", {
+      warm: 1,
       environment: {
         DATABASE_URL: process.env.DATABASE_URL!,
         DIRECT_URL: process.env.DIRECT_URL || "",
