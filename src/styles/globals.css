@@ -831,9 +831,12 @@ textarea.input { resize: vertical; min-height: 90px; }
 .font-mono { font-family: ui-monospace, monospace; }
 .font-semibold { font-weight: 600; }
 .font-bold { font-weight: 700; }
-
 /* ── Separator ── */
 .separator { height: 1px; background: var(--border-subtle); margin: 12px 0; }
+
+.mobile-header {
+  display: none;
+}
 
 /* ── Responsive Shell & Navigation ── */
 @media (max-width: 1023px) {
